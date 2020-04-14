@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <title>Vue app with webpack 4</title>
+        <style>
+            * {
+                color: #333333;
+                font-family: Circular, Helvetica, Arial, sans-serif, IosFix;
+            }
+            body {
+                background-color: #F5F7F6;
+            }
+            .waves-effect.waves-wispy .waves-ripple {
+                background-color: #A8C0D8;
+            }
+            ::selection {
+                color: none;
+                background: none;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app"></div>
+        <script src="./dist/build.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+        <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    </body>
+</html>

@@ -1,0 +1,7 @@
+{
+    "extends": ["airbnb-base", "plugin:vue/recommended"],
+    "rules": {
+        "vue/html-indent": ["error", 4],
+        "indent": ["error", 4]
+    }
+}
