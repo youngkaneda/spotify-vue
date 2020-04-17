@@ -1,7 +1,7 @@
 <template>
-    <div id="player" class="row">
+    <div v-if="activeDeviceId === deviceId">
         <div id="song-preview" class="col s2">
-            <div>
+            <div style="margin-top: 0.5%">
                 <img v-if="currentTrack.image" :src="currentTrack.image">            
             </div>
             <div id="song-info">
@@ -24,7 +24,7 @@
                 <i class="material-icons left waves-effect waves-wispy" @click="skipToNext">skip_next</i>
                 <i class="material-icons left waves-wispy minorOp"
                     @click="repeat"
-                    :style="{color: isRepating ? 'blue': '#A8C0D8'}"
+                    :style="{color: isRepeating ? 'blue': '#A8C0D8'}"
                     id="repeat"
                 >
                     {{ currentRepeatMode === 'track' ? 'repeat_one' : 'repeat' }}
@@ -41,23 +41,23 @@
                         v-model="progress"
                         :dot-size="15"
                         :silent="true"
+                        tooltip="none"
                         :process-style="{ background: '#A8C0D8' }"
                         :bg-style="{ background: '#737575' }"
                         :lazy="true" 
-                        :max="currentTrack.duration ? currentTrack.duration : null"
-                        v-on:drag-end="seekPosition">
+                        :max="currentTrack.duration ? currentTrack.duration : 0"
+                        v-on:change="seekPosition">
                     </VueSlider>
                 </div>
-                <div style="margin-top: 0.3%;">
+                <div style="margin-top: 0.3%; margin-left: 0.3%">
                     {{ currentTrack.duration ? getTimeDisplay(currentTrack.duration) : null }}
                 </div>
             </div>
         </div>
-        <div class="col s2" id="volumeAndDevice">
-            <i class="material-icons left waves-wispy deviceIcon">devices</i>
-            <i v-if="volume" class="material-icons left waves-wispy volumeIcon">volume_up</i>
+        <div class="col s2" id="volume">
+            <i v-if="volume" class="material-icons left waves-wispy volumeIcon" @click="mute">volume_up</i>
             <i v-else class="material-icons left waves-wispy volumeIcon">volume_off</i>
-            <div style="width: 50%;">
+            <div style="width: 65%;">
                 <VueSlider 
                     v-model="volume"
                     tooltip="none"
@@ -67,10 +67,13 @@
                     :bg-style="{ background: '#737575' }"
                     :lazy="true" 
                     :max="100"
-                    v-on:drag-end="changeVolume">
+                    v-on:change="changeVolume">
                 </VueSlider>
             </div>
         </div>
+    </div>
+    <div id="warning" v-else>
+        Please connect with this device to use the player functionalities.
     </div>
 </template>
 
@@ -78,7 +81,6 @@
 import VueSlider from 'vue-slider-component';
 import 'vue-slider-component/theme/default.css';
 import axios from 'axios';
-import moment from 'moment';
 import props from '../props';
 
 export default {
@@ -94,71 +96,96 @@ export default {
             progress: 0,
             volume: 0,
             isShuffled: false,
-            isRepating: false,
-            //
-            timerId: null,
+            isRepeating: false,
             repeatModes: ['off', 'context', 'track',],
             currentRepeatMode: null,
+            //
+            timerId: null,
         }
     },
+    props: {
+        activeDeviceId: null,
+    },
     mounted() {
-        // const token = JSON.parse(window.localStorage.getItem('spotify')).access_token;
-        // this.player = new window.Spotify.Player({
-        //     name: 'Web Playback SDK Quick Start Player',
-        //     getOAuthToken: cb => { cb(token); }
-        // });
+        const token = JSON.parse(window.localStorage.getItem('spotify')).access_token;
+        //
+        this.player = new window.Spotify.Player({
+            name: 'Web Playback SDK Quick Start Player',
+            getOAuthToken: cb => { cb(token); }
+        });
 
-        // // Error handling
-        // this.player.addListener('initialization_error', ({ message }) => { console.error(message); });
-        // this.player.addListener('authentication_error', ({ message }) => { console.error(message); });
-        // this.player.addListener('account_error', ({ message }) => { console.error(message); });
-        // this.player.addListener('playback_error', ({ message }) => { console.error(message); });
+        // Error handling
+        this.player.addListener('initialization_error', ({ message }) => { console.error(message); });
+        this.player.addListener('authentication_error', ({ message }) => { console.error(message); });
+        this.player.addListener('account_error', ({ message }) => { console.error(message); });
+        this.player.addListener('playback_error', ({ message }) => { console.error(message); });
 
-        // // Playback status updates
-        // this.player.addListener('player_state_changed', state => { 
-        //     // clear time positions
-        //     this.progress = 0;
-        //     //
-        //     this.isPlaying = !state.paused;
-        //     // this.isShuffled = state.shuffle;
-        //     //
-        //     const currentTrack = state.track_window.current_track;
-        //     this.currentTrack.image = currentTrack.album.images[1].url;
-        //     this.currentTrack.name = currentTrack.name;
-        //     this.currentTrack.artist = currentTrack.artists[0].name;
-        //     this.currentTrack.duration = currentTrack.duration_ms;
-        //     //
-        //     this.progress = state.position;
-        //     //
-        //     clearInterval(this.timerId);
-        //     this.timerId = setInterval(() => {
-        //         if (!this.isPlaying) {
-        //             return ;
-        //         }
-        //         if (this.progress + 1000 < this.currentTrack.duration) {
-        //             this.progress += 1000;
-        //         }
-        //         else {
-        //             clearInterval(this.timerId);
-        //         }
-        //     }, 1000);
-        // });
+        // Playback status updates
+        this.player.addListener('player_state_changed', state => { 
+            if (!state) {
+                return ;
+            }
+            //
+            this.isPlaying = !state.paused;
+            this.isShuffled = state.shuffle;
+            this.isRepeating = state.repeat_mode ? true : false;
+            this.currentRepeatMode = this.repeatModes[state.repeat_mode];
+            //
+            const currentTrack = state.track_window.current_track;
+            this.currentTrack.image = currentTrack.album.images[1].url;
+            this.currentTrack.name = currentTrack.name;
+            this.currentTrack.artist = currentTrack.artists[0].name;
+            this.currentTrack.duration = currentTrack.duration_ms;
+            //
+            this.progress = state.position;
+            // TODO: make a better option for performance
+            clearInterval(this.timerId);
+            this.timerId = setInterval(() => {
+                if (!this.isPlaying) {
+                    return ;
+                }
+                if (this.progress + 1000 < this.currentTrack.duration) {
+                    this.progress += 1000;
+                }
+                else {
+                    clearInterval(this.timerId);
+                }
+            }, 1000);
+        });
 
-        // // Ready
-        // this.player.addListener('ready', ({ device_id }) => {
-        //     console.log('Ready with Device ID', device_id);
-        //     this.deviceId = device_id;
-        // });
+        // Ready
+        this.player.addListener('ready', ({ device_id }) => {
+            console.log('Ready with Device ID', device_id);
+            this.deviceId = device_id;
+            // set default volume to the player;
+            this.player.setVolume(1).then(() => {
+                console.log('Volume updated.');
+                this.volume = 100;
+            });
+        });
 
-        // // Not Ready
-        // this.player.addListener('not_ready', ({ device_id }) => {
-        //     console.log('Device ID has gone offline', device_id);
-        // });
+        // Not Ready
+        this.player.addListener('not_ready', ({ device_id }) => {
+            console.log('Device ID has gone offline', device_id);
+        });
 
-        // // Connect to the player!
-        // this.player.connect();
+        // Connect to the player!
+        this.player.connect();
     },
     methods: {
+        mute() {
+            axios.put(`${props.api}/me/player/volume?device_id=${this.deviceId}&volume_percent=${0}`,
+                null,
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                    },
+                },
+            )
+            .then((response) => {
+                this.volume = 0;
+            });
+        },
         pause() {
             axios.put(`${props.api}/me/player/pause?device_id=${this.deviceId}`, null, {
                 headers: {
@@ -209,6 +236,9 @@ export default {
         },
         repeat() {
             let nextRepeatModeIndex = this.repeatModes.indexOf(this.currentRepeatMode) + 1;
+            if (nextRepeatModeIndex === this.repeatModes.length) {
+                nextRepeatModeIndex = 0;
+            }
             axios.put(`${props.api}/me/player/repeat?device_id=${this.deviceId}&state=${this.repeatModes[nextRepeatModeIndex]}`,
                 null,
                 {
@@ -219,7 +249,14 @@ export default {
             );
         },
         changeVolume() {
-
+            axios.put(`${props.api}/me/player/volume?device_id=${this.deviceId}&volume_percent=${this.volume}`,
+                null,
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                    },
+                },
+            );
         },
         getTimeDisplay(ms) {
             var seconds = (ms / 1000).toFixed(0);
@@ -262,14 +299,6 @@ export default {
 #artist-name {
     font-size: 90%;
 }
-#player {
-    bottom: 0;
-    position: absolute;
-    margin: 0;
-    padding: 0.2% 0% 0.3% 0%;
-    width: 100%;
-    background-color: #ededed;
-}
 #sdk-player {
     display: flex;
     flex-direction: column;
@@ -285,13 +314,13 @@ export default {
     margin: 0.5% 0 0 1.3%;
     width: 70%;
 }
-#volumeAndDevice {
+#volume {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    margin: 1.4% 0 0 0;
-    padding-left: 5%;
+    margin: 1.6% 0 0 0;
+    padding-left: 7%;
 }
 i {
     font-size: 260%;
@@ -301,11 +330,18 @@ i {
     font-size: 150%;
     margin-top: 1.2%;
 }
-.volumeIcon, .deviceIcon {
+.volumeIcon {
     font-size: 150%;
 }
 i:hover {
     cursor: pointer;
     color: #1b7cde;
+}
+#warning {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 </style>
