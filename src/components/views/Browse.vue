@@ -7,6 +7,11 @@
                         <img :src="this.profilePic" alt="" srcset="" class="profile-pic" width="62%" height="62%">
                         <p id="profile-name">{{ this.me.display_name }}</p>
                     </li>
+                    <li class="bold">
+                        <a class="waves-effect waves-wispy" @click="() => {this.$router.push('/browse');}">
+                            <i class="material-icons left">home</i> Home
+                        </a>
+                    </li>                        
                     <li>
                         <input class="collapse-open" type="checkbox" id="collapse-3">
                         <label class="collapse-btn" for="collapse-3">
@@ -52,7 +57,9 @@
                     </li>
                 </ul>
             </div>
-            <div id="display" class="col s10"></div>
+            <div id="display" class="col s10">
+                <router-view></router-view>
+            </div>
         </div>
         <div id="player" class="row">
             <Player :activeDeviceId="activeDeviceId"></Player>
@@ -62,7 +69,7 @@
 
 <script>
 import axios from 'axios';
-import props from '../props';
+import props from '../../props';
 import Player from './Player';
 
 export default {
@@ -161,6 +168,10 @@ label li a {
     font-weight: bold;
     font-size: 105%;
 }
+li a {
+    font-weight: bold;
+    font-size: 105%;
+}
 hr {
     width: 85%;
 }
@@ -221,11 +232,16 @@ i {
 .collapse-list .collapse-inner {
     padding: 10px
 }
-
+/*  */
+#display {
+    overflow: auto;
+    max-height: 59em;
+    padding-bottom: 0.8%;
+}
 /*  */
 #player {
     bottom: 0;
-    position: absolute;
+    position: fixed;
     margin: 0;
     padding: 0.2% 0% 0.3% 0%;
     width: 100%;

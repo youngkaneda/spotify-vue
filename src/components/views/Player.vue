@@ -1,12 +1,12 @@
 <template>
-    <div v-if="activeDeviceId === deviceId">
+    <div v-if="activeDeviceId === deviceId && activeDeviceId != null">
         <div id="song-preview" class="col s2">
-            <div style="margin-top: 0.5%">
-                <img v-if="currentTrack.image" :src="currentTrack.image">            
+            <div style="margin-top: 2%">
+                <img v-if="currentTrack.album.images" :src="currentTrack.album.images[1].url">            
             </div>
             <div id="song-info">
                 <p id="song-name">{{ currentTrack.name }}</p>
-                <p id="artist-name">{{ currentTrack.artist }}</p>
+                <p id="artist-name">{{ currentTrack.artists ? currentTrack.artists[0].name : null }}</p>
             </div>
         </div>
         <div id="sdk-player" class="col s8">
@@ -45,19 +45,20 @@
                         :process-style="{ background: '#A8C0D8' }"
                         :bg-style="{ background: '#737575' }"
                         :lazy="true" 
-                        :max="currentTrack.duration ? currentTrack.duration : 0"
+                        :max="currentTrack.duration_ms ? currentTrack.duration_ms : 0"
                         v-on:change="seekPosition">
                     </VueSlider>
                 </div>
-                <div style="margin-top: 0.3%; margin-left: 0.3%">
-                    {{ currentTrack.duration ? getTimeDisplay(currentTrack.duration) : null }}
+                <div style="margin-top: 0.3%; margin-left: 1%">
+                    {{ currentTrack.duration_ms ? getTimeDisplay(currentTrack.duration_ms) : null }}
                 </div>
             </div>
         </div>
         <div class="col s2" id="volume">
+            <i class="material-icons left waves-wispy volumeIcon" @click="openQueue">queue_music</i>
             <i v-if="volume" class="material-icons left waves-wispy volumeIcon" @click="mute">volume_up</i>
             <i v-else class="material-icons left waves-wispy volumeIcon">volume_off</i>
-            <div style="width: 65%;">
+            <div style="width: 60%;">
                 <VueSlider 
                     v-model="volume"
                     tooltip="none"
@@ -81,7 +82,7 @@
 import VueSlider from 'vue-slider-component';
 import 'vue-slider-component/theme/default.css';
 import axios from 'axios';
-import props from '../props';
+import props from '../../props';
 
 export default {
     components: {
@@ -92,7 +93,6 @@ export default {
             isPlaying: false,
             player: {},
             deviceId: null,
-            currentTrack: {},
             progress: 0,
             volume: 0,
             isShuffled: false,
@@ -105,6 +105,14 @@ export default {
     },
     props: {
         activeDeviceId: null,
+    },
+    computed: {
+        currentTrack() {
+            return this.$store.state.currentTrack;
+        },
+        queue() {
+            return this.$store.state.queue;
+        }
     },
     mounted() {
         const token = JSON.parse(window.localStorage.getItem('spotify')).access_token;
@@ -125,26 +133,24 @@ export default {
             if (!state) {
                 return ;
             }
-            //
+            this.progress = state.position;
             this.isPlaying = !state.paused;
             this.isShuffled = state.shuffle;
             this.isRepeating = state.repeat_mode ? true : false;
             this.currentRepeatMode = this.repeatModes[state.repeat_mode];
             //
-            const currentTrack = state.track_window.current_track;
-            this.currentTrack.image = currentTrack.album.images[1].url;
-            this.currentTrack.name = currentTrack.name;
-            this.currentTrack.artist = currentTrack.artists[0].name;
-            this.currentTrack.duration = currentTrack.duration_ms;
-            //
-            this.progress = state.position;
+            this.$store.commit('updateCurrentTrack', state.track_window.current_track);
+            // update queue
+            if (this.queue.length > 0 && this.queue[0].id === this.currentTrack.id) {
+                this.$store.commit('shiftQueue');
+            }
             // TODO: make a better option for performance
             clearInterval(this.timerId);
             this.timerId = setInterval(() => {
                 if (!this.isPlaying) {
                     return ;
                 }
-                if (this.progress + 1000 < this.currentTrack.duration) {
+                if (this.progress + 1000 < this.currentTrack.duration_ms) {
                     this.progress += 1000;
                 }
                 else {
@@ -258,6 +264,9 @@ export default {
                 },
             );
         },
+        openQueue() {
+            this.$router.push('/browse/queue');
+        },
         getTimeDisplay(ms) {
             var seconds = (ms / 1000).toFixed(0);
             var minutes = Math.floor(seconds / 60);
@@ -287,7 +296,7 @@ export default {
 }
 #song-info {
     margin-left: 3%;
-    margin-top: 3%;
+    margin-top: 1%;
 }
 #song-info p {
     margin: 0;
@@ -295,9 +304,19 @@ export default {
 #song-name {
     font-weight: bold;
     font-size: 110%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: break-word;
+    overflow: hidden;
+    width: 10em;
 }
 #artist-name {
     font-size: 90%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-wrap: break-word;
+    overflow: hidden;
+    width: 10em;
 }
 #sdk-player {
     display: flex;
@@ -320,7 +339,8 @@ export default {
     justify-content: center;
     align-items: center;
     margin: 1.6% 0 0 0;
-    padding-left: 7%;
+    padding-left: 5%;
+    padding-right: 1%;
 }
 i {
     font-size: 260%;

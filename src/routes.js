@@ -1,9 +1,18 @@
 import Redirect from './components/Redirect.vue';
-import Home from './components/Home.vue';
-import Browse from './components/Browse.vue';
+import Index from './components/views/Index.vue';
+import Browse from './components/views/Browse.vue';
+import Home from './components/views/Home.vue';
+import Queue from './components/views/Queue.vue';
 
 export default [
     { path: '/redirect', component: Redirect },
-    { path: '/', component: Home },
-    { path: '/browse', component: Browse },
+    { path: '/', component: Index },
+    {
+        path: '/browse',
+        component: Browse,
+        children: [
+            { path: '/browse/queue', component: Queue },
+            { path: '', component: Home },
+        ],
+    },
 ];

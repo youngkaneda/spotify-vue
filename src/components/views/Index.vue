@@ -1,7 +1,7 @@
 <template>
     <div id="main">
         <div id="desc">
-            <img src="../assets/logo.png" alt="vue logo" srcset="">
+            <img src="../../assets/logo.png" alt="vue logo" srcset="">
             <h1>A spotify web app made with vue.</h1>
             <p>- Based on ayanami rei.</p>
             <a class="waves-effect waves-wispy btn-flat" id="connect" @click="sendToSpotify">
@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import props from '../props';
+import props from '../../props';
 
 export default {
     methods: {
