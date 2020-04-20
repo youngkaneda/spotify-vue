@@ -9,7 +9,7 @@
             <div class="song-info">
                 <p class="song-name current">{{ currentTrack.name }} <span style="font-size: 90%"> - {{ getTimeDisplay(currentTrack.duration_ms) }} </span></p>
                 <p class="artist-info">
-                    <span class="link">{{ currentTrack.artists[0].name }}</span>
+                    <span class="link">{{ currentTrack.artists.map(el => el.name).join(', ') }}</span>
                     &centerdot;
                     <span class="link">{{ currentTrack.album.name }}</span>
                 </p>
@@ -23,7 +23,7 @@
             <div class="song-info">
                 <p class="song-name">{{ track.name }} <span style="font-size: 90%"> - {{ getTimeDisplay(track.duration_ms) }} </span></p>
                 <p class="artist-info">
-                    <span class="link">{{ track.artists[0].name }} </span>
+                    <span class="link">{{ track.artists.map(el => el.name).join(', ') }} </span>
                     &centerdot;
                     <span class="link">{{ track.album.name }} </span>
                 </p>

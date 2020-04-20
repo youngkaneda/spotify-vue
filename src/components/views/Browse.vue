@@ -8,8 +8,8 @@
                         <p id="profile-name">{{ this.me.display_name }}</p>
                     </li>
                     <li class="bold">
-                        <a class="waves-effect waves-wispy" @click="() => {this.$router.push('/browse');}">
-                            <i class="material-icons left">home</i> Home
+                        <a class="waves-effect waves-wispy" style="font-size: 90%; font-weight: bold;" @click="() => {this.$router.push('/browse');}">
+                            <i class="material-icons left">home</i> HOME
                         </a>
                     </li>                        
                     <li>
@@ -26,7 +26,9 @@
                         <div class="collapse-painel">
                             <div class="collapse-inner">
                                 <li class="bold"><a class="waves-effect waves-wispy"><i class="material-icons left">album</i> Albums</a></li>
-                                <li class="bold"><a class="waves-effect waves-wispy"><i class="material-icons left">mic</i> Artists</a></li>
+                                <li class="bold" @click="() => this.$router.push('/browse/artists')">
+                                    <a class="waves-effect waves-wispy"><i class="material-icons left">mic</i> Artists</a>
+                                </li>
                                 <li class="bold"><a class="waves-effect waves-wispy"><i class="material-icons left">format_list_bulleted</i> Playlists</a></li>
                             </div>
                         </div>
@@ -141,12 +143,7 @@ export default {
 </script>
 
 <style scoped>
-#menu {
-    background-color: #F5F7F6;
-}
-#nav-mobile {
-    z-index: -1 !important;
-}
+
 .profile-pic {
     border-radius: 50%;
 }
@@ -165,10 +162,6 @@ export default {
     font-size: 22px;
 }
 label li a {
-    font-weight: bold;
-    font-size: 105%;
-}
-li a {
     font-weight: bold;
     font-size: 105%;
 }
@@ -236,7 +229,7 @@ i {
 #display {
     overflow: auto;
     max-height: 59em;
-    padding-bottom: 0.8%;
+    /* padding-bottom: 0.8%; */
 }
 /*  */
 #player {
@@ -246,5 +239,6 @@ i {
     padding: 0.2% 0% 0.3% 0%;
     width: 100%;
     background-color: #ededed;
+    z-index: 999 !important;
 }
 </style>

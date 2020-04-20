@@ -176,7 +176,7 @@ export default {
         });
 
         // Connect to the player!
-        this.player.connect();
+        // this.player.connect();
     },
     methods: {
         mute() {
