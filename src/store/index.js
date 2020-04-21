@@ -7,15 +7,26 @@ const store = new Vuex.Store({
     state: {
         queue: [],
         currentTrack: {},
+        deviceId: null,
     },
     mutations: {
         updateCurrentTrack: (state, newTrack) => {
             // eslint-disable-next-line no-param-reassign
             state.currentTrack = newTrack;
         },
+        addToQueue: (state, track) => {
+            state.queue.push(track);
+        },
         shiftQueue: (state) => {
+            if (state.queue.length === 0) {
+                return;
+            }
             // eslint-disable-next-line no-param-reassign
-            state.queue = state.queue.shift();
+            state.queue.shift();
+        },
+        setDeviceId: (state, deviceId) => {
+            // eslint-disable-next-line no-param-reassign
+            state.deviceId = deviceId;
         },
     },
 });

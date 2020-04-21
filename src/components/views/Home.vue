@@ -116,7 +116,8 @@ p, span {
     margin-left: 0.9%;
 }
 .song-image {
-    width: 75%;
+    width: 8em;
+    height: 8em;
     margin-top: 11%;
     margin-left: 12%;
 }

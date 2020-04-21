@@ -25,11 +25,21 @@
                         </label>
                         <div class="collapse-painel">
                             <div class="collapse-inner">
-                                <li class="bold"><a class="waves-effect waves-wispy"><i class="material-icons left">album</i> Albums</a></li>
+                                <li class="bold">
+                                    <a class="waves-effect waves-wispy" @click="() => {this.$router.push('/browse/albums');}">
+                                        <i class="material-icons left">album</i> 
+                                        Albums
+                                    </a>
+                                </li>
                                 <li class="bold" @click="() => this.$router.push('/browse/artists')">
                                     <a class="waves-effect waves-wispy"><i class="material-icons left">mic</i> Artists</a>
                                 </li>
-                                <li class="bold"><a class="waves-effect waves-wispy"><i class="material-icons left">format_list_bulleted</i> Playlists</a></li>
+                                <li class="bold">
+                                    <a class="waves-effect waves-wispy" @click="() => {this.$router.push('/browse/playlists');}">
+                                        <i class="material-icons left">format_list_bulleted</i> 
+                                        Playlists
+                                    </a>
+                                </li>
                             </div>
                         </div>
                     </li>

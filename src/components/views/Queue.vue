@@ -9,23 +9,29 @@
             <div class="song-info">
                 <p class="song-name current">{{ currentTrack.name }} <span style="font-size: 90%"> - {{ getTimeDisplay(currentTrack.duration_ms) }} </span></p>
                 <p class="artist-info">
-                    <span class="link">{{ currentTrack.artists.map(el => el.name).join(', ') }}</span>
+                    <span class="link" @click="openArtist(currentTrack.artists[0])">
+                        {{ currentTrack.artists ? currentTrack.artists.map(el => el.name).join(', ') : '' }}
+                    </span>
                     &centerdot;
-                    <span class="link">{{ currentTrack.album.name }}</span>
+                    <span class="link" @click="openAlbum(currentTrack.album)">
+                        {{ currentTrack.album ? currentTrack.album.name : '' }}
+                    </span>
                 </p>
             </div>
         </div>
         <h5 class="topic">Next in Queue</h5>
-        <div class="song" v-for="track in queue" :key="track.id">
+        <div class="song" v-for="(track, i) in queue" :key="track.id + i">
             <div class="icon">
                 <i class="material-icons left waves-wispy volumeIcon">music_note</i>
             </div>
             <div class="song-info">
                 <p class="song-name">{{ track.name }} <span style="font-size: 90%"> - {{ getTimeDisplay(track.duration_ms) }} </span></p>
                 <p class="artist-info">
-                    <span class="link">{{ track.artists.map(el => el.name).join(', ') }} </span>
+                    <span class="link" @click="openArtist(track.artists[0])">
+                        {{ track.artists ? track.artists.map(el => el.name).join(', ') : '' }}
+                    </span>
                     &centerdot;
-                    <span class="link">{{ track.album.name }} </span>
+                    <span class="link" @click="openAlbum(track.album)">{{ track.album ? track.album.name : '' }} </span>
                 </p>
             </div>
         </div>
@@ -50,6 +56,13 @@ export default {
         }
     },
     methods: {
+        openAlbum(album) {
+            console.log(this.currentTrack);
+            this.$router.push({ path: '/browse/album', query: { id: album.uri.split(':')[2] } });
+        },
+        openArtist(artist) {
+            this.$router.push({ path: '/browse/artist', query: { id: artist.uri.split(':')[2] } });
+        },
         getTimeDisplay(ms) {
             var seconds = (ms / 1000).toFixed(0);
             var minutes = Math.floor(seconds / 60);

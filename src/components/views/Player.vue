@@ -92,7 +92,6 @@ export default {
         return {
             isPlaying: false,
             player: {},
-            deviceId: null,
             progress: 0,
             volume: 0,
             isShuffled: false,
@@ -112,6 +111,9 @@ export default {
         },
         queue() {
             return this.$store.state.queue;
+        },
+        deviceId() {
+            return this.$store.state.deviceId;
         }
     },
     mounted() {
@@ -139,7 +141,7 @@ export default {
             this.isRepeating = state.repeat_mode ? true : false;
             this.currentRepeatMode = this.repeatModes[state.repeat_mode];
             //
-            this.$store.commit('updateCurrentTrack', state.track_window.current_track);
+            this.$store.commit('updateCurrentTrack', {...state.track_window.current_track, 'is_playing': !state.paused});
             // update queue
             if (this.queue.length > 0 && this.queue[0].id === this.currentTrack.id) {
                 this.$store.commit('shiftQueue');
@@ -162,7 +164,7 @@ export default {
         // Ready
         this.player.addListener('ready', ({ device_id }) => {
             console.log('Ready with Device ID', device_id);
-            this.deviceId = device_id;
+            this.$store.commit('setDeviceId', device_id);
             // set default volume to the player;
             this.player.setVolume(1).then(() => {
                 console.log('Volume updated.');
@@ -176,7 +178,7 @@ export default {
         });
 
         // Connect to the player!
-        // this.player.connect();
+        this.player.connect();
     },
     methods: {
         mute() {
