@@ -24,6 +24,17 @@ const store = new Vuex.Store({
             // eslint-disable-next-line no-param-reassign
             state.queue.shift();
         },
+        skipQueueToTrack: (state, id) => {
+            let index = null;
+            state.queue.every((el, i) => {
+                if (el.id === id) {
+                    index = i;
+                    return false;
+                }
+                return true;
+            });
+            state.queue.splice(0, index + 1);
+        },
         setDeviceId: (state, deviceId) => {
             // eslint-disable-next-line no-param-reassign
             state.deviceId = deviceId;

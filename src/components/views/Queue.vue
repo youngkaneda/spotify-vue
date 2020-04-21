@@ -4,7 +4,11 @@
         <h5 class="topic">Now Playing</h5>
         <div class="song">
             <div class="icon">
-                <i class="material-icons left waves-wispy volumeIcon">music_note</i>
+                <i style="cursor: pointer; color: #1b7cde;" class="material-icons left waves-wispy" 
+                    @click="togglePlay()"
+                >
+                    {{ currentTrack.is_playing ? 'pause' : 'play_arrow'}}
+                </i>
             </div>
             <div class="song-info">
                 <p class="song-name current">{{ currentTrack.name }} <span style="font-size: 90%"> - {{ getTimeDisplay(currentTrack.duration_ms) }} </span></p>
@@ -22,7 +26,12 @@
         <h5 class="topic">Next in Queue</h5>
         <div class="song" v-for="(track, i) in queue" :key="track.id + i">
             <div class="icon">
-                <i class="material-icons left waves-wispy volumeIcon">music_note</i>
+                <i style="cursor: pointer;" 
+                    class="material-icons left waves-wispy volumeIcon"
+                    @click="play(track)"
+                >
+                    play_arrow
+                </i>
             </div>
             <div class="song-info">
                 <p class="song-name">{{ track.name }} <span style="font-size: 90%"> - {{ getTimeDisplay(track.duration_ms) }} </span></p>
@@ -48,6 +57,9 @@ export default {
         }
     },
     computed: {
+        deviceId() {
+            return this.$store.state.deviceId;
+        },
         currentTrack() {
             return this.$store.state.currentTrack;
         },
@@ -56,6 +68,36 @@ export default {
         }
     },
     methods: {
+        play(track) {
+            axios.put(`${props.api}/me/player/play?device_id=${this.deviceId}`,
+                {
+                    'uris': [track.uri],
+                },
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                    },
+                }
+            )
+            .then((response) => {
+                this.$store.commit('skipQueueToTrack', track.id);
+            });
+        },
+        togglePlay() {
+            if (this.currentTrack.is_playing) {
+                axios.put(`${props.api}/me/player/pause?device_id=${this.deviceId}`, null, {
+                    headers: {
+                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                    },
+                });
+            } else {
+                axios.put(`${props.api}/me/player/play?device_id=${this.deviceId}`, null, {
+                    headers: {
+                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                    },
+                });
+            };
+        },
         openAlbum(album) {
             console.log(this.currentTrack);
             this.$router.push({ path: '/browse/album', query: { id: album.uri.split(':')[2] } });
