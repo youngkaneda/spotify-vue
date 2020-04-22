@@ -25,6 +25,7 @@ npm run dev
 6. You can play a playlist, not albums yet.
 7. Queue, add to queue, jump to song in queue.
 8. A list of connected devices, you can connect to them.*
+9. Search artists, albums, songs and playlists.
 
 *\* To use the player functionalities you need to connect with the web sdk player created in this application, unfortunately the spotify doesnt give support to listen the state in other devices. I could use polling but performance would be a huge problem.*
 ## Limitations
