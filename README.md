@@ -25,13 +25,20 @@ npm run dev
 6. You can play a playlist, not albums yet.
 7. Queue, add to queue, jump to song in queue.
 8. A list of connected devices, you can connect to them.*
+
+*\* To use the player functionalities you need to connect with the web sdk player created in this application, unfortunately the spotify doesnt give support to listen the state in other devices. I could use polling but performance would be a huge problem.*
 ## Limitations
 
-
+1. You can't follow, create, edit or delete playlists.
+2. You can't follow artits, save albums or songs either.
+3. You can't edit your profile.
+4. The queue present some weird behaviors (I still analyzing this).
+5. **I don't know in which browsers the layout fits well, on chromium in a 1920x1080 screen everything is fine.**
+6. **It isn't responsive.*
 
 ## Motivation
 
-
+I just wanted to create a webapp to practice my design and web dev skills in vue, also as using a 3rd party api.
 
 ## Screenshots
 
@@ -39,4 +46,4 @@ npm run dev
 
 Feel free to fork and contribute.
 
-*PS.:and help me fixing the responsivity and layout stability in different browsers.*
+*PS.: Help me fixing the responsivity and layout stability in different browsers.*
