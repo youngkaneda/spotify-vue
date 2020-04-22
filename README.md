@@ -35,7 +35,7 @@ npm run dev
 4. The queue present some weird behaviors (I still analyzing this).
 5. **I don't know in which browsers the layout fits well, on chromium in a 1920x1080 screen everything is fine.**
 6. **It isn't responsive.*
-7. I didn't implemented pagging yet, the spotify web api works with pagging objects in some endpoints, i.e. if you wanna see your playlists, it will load the first 50 results, just it, i will implement the pagination listening to some scroll events or whatever.
+7. I didn't implemented pagination yet, the spotify web api works with pagging objects in some endpoints, i.e. if you wanna see your playlists, it will load the first 50 results, just it, i will implement the pagination listening to some scroll events or whatever.
 
 ## Motivation
 
