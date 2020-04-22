@@ -140,6 +140,7 @@ export default {
             )
             .then((response) => {
                 this.$store.commit('addToQueue', track);
+                console.log(track);
                 this.launchToast();
             });
         },

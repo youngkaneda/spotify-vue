@@ -91,7 +91,6 @@ export default {
     data() {
         return {
             isPlaying: false,
-            player: {},
             progress: 0,
             volume: 0,
             isShuffled: false,
@@ -114,24 +113,29 @@ export default {
         },
         deviceId() {
             return this.$store.state.deviceId;
+        },
+        player() {
+            return this.$store.state.player;
         }
     },
     mounted() {
+        if (this.player) {
+            // Connect to the player!
+            this.player.connect();
+            return;
+        }
         const token = JSON.parse(window.localStorage.getItem('spotify')).access_token;
-        //
-        this.player = new window.Spotify.Player({
-            name: 'Web Playback SDK Quick Start Player',
+        const player = new window.Spotify.Player({
+            name: 'Web Playback SDK',
             getOAuthToken: cb => { cb(token); }
         });
-
         // Error handling
-        this.player.addListener('initialization_error', ({ message }) => { console.error(message); });
-        this.player.addListener('authentication_error', ({ message }) => { console.error(message); });
-        this.player.addListener('account_error', ({ message }) => { console.error(message); });
-        this.player.addListener('playback_error', ({ message }) => { console.error(message); });
-
+        player.addListener('initialization_error', ({ message }) => { console.error(message); });
+        player.addListener('authentication_error', ({ message }) => { console.error(message); });
+        player.addListener('account_error', ({ message }) => { console.error(message); });
+        player.addListener('playback_error', ({ message }) => { console.error(message); });
         // Playback status updates
-        this.player.addListener('player_state_changed', state => { 
+        player.addListener('player_state_changed', state => { 
             if (!state) {
                 return ;
             }
@@ -160,27 +164,44 @@ export default {
                 }
             }, 1000);
         });
-
         // Ready
-        this.player.addListener('ready', ({ device_id }) => {
+        player.addListener('ready', ({ device_id }) => {
             console.log('Ready with Device ID', device_id);
             this.$store.commit('setDeviceId', device_id);
             // set default volume to the player;
-            this.player.setVolume(1).then(() => {
+            player.setVolume(1).then(() => {
                 console.log('Volume updated.');
                 this.volume = 100;
             });
         });
-
         // Not Ready
-        this.player.addListener('not_ready', ({ device_id }) => {
+        player.addListener('not_ready', ({ device_id }) => {
             console.log('Device ID has gone offline', device_id);
         });
-
-        // Connect to the player!
-        this.player.connect();
+        player.connect();
+        this.$store.commit('setPlayer', player);
     },
     methods: {
+        scheduleRefreshToken() {
+            //create setinterval to refresh token and reconnect the web sdk, and transfer the playback to it if it was active
+            setInterval(() => {
+                let spotify = JSON.parse(window.localStorage.getItem('spotify'));
+                let req = new URLSearchParams();
+                req.set('grant_type', 'refresh_token');
+                req.set('refresh_token', spotify.refresh_token);
+                axios.post('https://accounts.spotify.com/api/token', req, {
+                    headers: {
+                        'Content-Type':'application/x-www-form-urlencoded',
+                        Authorization: 'Basic ' + btoa(`${props.clientId}:${props.clientSecret}`),
+                    },
+                })
+                .then((response) => {
+                    spotify.access_token = response.data.access_token;
+                    window.localStorage.setItem('spotify', JSON.stringify(spotify));
+                    //
+                })
+            }, 1000 * 60 * 55);
+        },
         mute() {
             axios.put(`${props.api}/me/player/volume?device_id=${this.deviceId}&volume_percent=${0}`,
                 null,

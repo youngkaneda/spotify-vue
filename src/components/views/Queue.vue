@@ -67,6 +67,9 @@ export default {
             return this.$store.state.queue;
         }
     },
+    beforeUpdate() {
+        console.log(this.queue);
+    },
     methods: {
         play(track) {
             axios.put(`${props.api}/me/player/play?device_id=${this.deviceId}`,
@@ -99,7 +102,6 @@ export default {
             };
         },
         openAlbum(album) {
-            console.log(this.currentTrack);
             this.$router.push({ path: '/browse/album', query: { id: album.uri.split(':')[2] } });
         },
         openArtist(artist) {

@@ -9,6 +9,7 @@ import Artists from './components/views/Artists.vue';
 import Artist from './components/views/Artist.vue';
 import Playlists from './components/views/Playlists.vue';
 import Playlist from './components/views/Playlist.vue';
+import Search from './components/views/Search.vue';
 
 export default [
     { path: '/redirect', component: Redirect },
@@ -24,6 +25,12 @@ export default [
             { path: '/browse/artist', component: Artist },
             { path: '/browse/playlists', component: Playlists },
             { path: '/browse/playlist', component: Playlist },
+            {
+                path: '/browse/search',
+                name: 'search',
+                component: Search,
+                props: true,
+            },
             { path: '', component: Home },
         ],
     },

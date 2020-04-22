@@ -1,2 +1,2 @@
-# spotify-rei
-A spotify clone based on ayanami rei
+# spotify-vue
+A spotify clone made with vue

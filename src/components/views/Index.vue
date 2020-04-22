@@ -17,6 +17,7 @@ import props from '../../props';
 export default {
     methods: {
         sendToSpotify() {
+            // clean store;
             window.location.replace(`https://accounts.spotify.com/authorize?client_id=${props.clientId}&response_type=code&redirect_uri=${props.redirectURI}&scope=${props.scope}`);
         }
     }
@@ -28,6 +29,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 10%;
 }
 #desc {
     width: 29%;

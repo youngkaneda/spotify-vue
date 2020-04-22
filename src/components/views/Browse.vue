@@ -70,6 +70,10 @@
                 </ul>
             </div>
             <div id="display" class="col s10">
+                <div class="search-bar">
+                    <i class="material-icons search-icon">search</i>
+                    <input type="text" placeholder="Search" @change="search">
+                </div>
                 <router-view></router-view>
             </div>
         </div>
@@ -112,6 +116,21 @@ export default {
         this.getDevices();
     },
     methods: {
+        search(event) {
+            axios.get(`${props.api}/search?q=`
+                + encodeURIComponent(event.target.value)
+                + '&type=track,album,playlist,artist&limit=9',
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                    },
+                }
+            )
+            .then((response) => {
+                this.$store.commit('setSearchResult', response.data);
+                this.$router.push({name: 'search'});
+            });
+        },
         refreshDevices(event) {
             event.stopPropagation();
             event.preventDefault();
@@ -153,7 +172,6 @@ export default {
 </script>
 
 <style scoped>
-
 .profile-pic {
     border-radius: 50%;
 }
@@ -192,11 +210,9 @@ i {
     list-style: none;
     border-bottom: 1px solid #e0e0e0;
 }
-
 .collapse-open {
     display: none;
 }
-
 .collapse-painel {
     visibility: hidden;
     max-height: 0;
@@ -205,17 +221,14 @@ i {
     visibility .3s,
     opacity .3s;
 }
-
 .collapse-open:checked ~ .collapse-painel {
     max-height: 100%;
     opacity: 100;
     visibility: visible
 }
-
 .collapse-list li {
     margin-bottom: 0;
 }
-
 .collapse-list .collapse-btn {
     border-top: 1px solid #e0e0e0;
     cursor: pointer;
@@ -227,13 +240,30 @@ i {
     font-size: 105%;
     transition: background-color .2s ease;
 }
-
 .collapse-list .collapse-btn:hover {
     background: #eee;
 }
-
 .collapse-list .collapse-inner {
     padding: 10px
+}
+/*  */
+.search-bar {
+    display: flex;
+    flex-direction: row;
+    /* justify-content: center; */
+    align-items: center;
+}
+.search-icon {
+    margin: 0.9% 0.5% 0 0 !important;
+}
+input {
+    width: 15% !important;
+    height: 2rem !important;
+    margin: 0.5% 0 0 0 !important;
+}
+input::selection {
+    color: white;
+    background: #A8C0D8;
 }
 /*  */
 #display {

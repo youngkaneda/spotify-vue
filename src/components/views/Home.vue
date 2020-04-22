@@ -95,7 +95,7 @@ p, span {
     font-weight: bold;
 }
 /*  */
-.play {
+/* .play {
     position: absolute;
     top: 2%;
     left: 3%;
@@ -104,7 +104,7 @@ p, span {
 }
 .card:hover .play {
     display: block;
-}
+} */
 .card {
     cursor: pointer;
     display: inline-block;

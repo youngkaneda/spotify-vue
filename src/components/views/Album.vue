@@ -116,6 +116,9 @@ export default {
                 }
             )
             .then((response) => {
+                //
+                track.album = { name: this.album.name };
+                //
                 this.$store.commit('addToQueue', track);
                 this.launchToast();
             });

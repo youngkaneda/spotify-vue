@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import Vue from 'vue';
 import Vuex from 'vuex';
 
@@ -8,10 +9,11 @@ const store = new Vuex.Store({
         queue: [],
         currentTrack: {},
         deviceId: null,
+        player: null,
+        searchResult: {},
     },
     mutations: {
         updateCurrentTrack: (state, newTrack) => {
-            // eslint-disable-next-line no-param-reassign
             state.currentTrack = newTrack;
         },
         addToQueue: (state, track) => {
@@ -21,7 +23,6 @@ const store = new Vuex.Store({
             if (state.queue.length === 0) {
                 return;
             }
-            // eslint-disable-next-line no-param-reassign
             state.queue.shift();
         },
         skipQueueToTrack: (state, id) => {
@@ -36,8 +37,13 @@ const store = new Vuex.Store({
             state.queue.splice(0, index + 1);
         },
         setDeviceId: (state, deviceId) => {
-            // eslint-disable-next-line no-param-reassign
             state.deviceId = deviceId;
+        },
+        setPlayer: (state, player) => {
+            state.player = player;
+        },
+        setSearchResult: (state, result) => {
+            state.searchResult = result;
         },
     },
 });
