@@ -6,6 +6,19 @@
                 <img class="song-image" :src="track.album.images[1].url" alt="">
                 <p class="song-name">{{ track.name }}</p>
                 <p class="artist">{{ track.artists.map(el => el.name).join(', ') }}</p>
+                <a class="btn-floating btn-large waves-effect waves-light play"
+                    @click="togglePlay($event, track)"
+                    :style="[(track.id === currentTrack.id || isLinkedFrom(track.id)) && currentTrack.is_playing ? {display: 'block !important'} : {}]"
+                >
+                    <i  v-if="(track.id === currentTrack.id || isLinkedFrom(track.id)) && currentTrack.is_playing"
+                        class="material-icons" style="font-size: 200%"
+                    >
+                        pause
+                    </i>
+                    <i  v-else class="material-icons" style="font-size: 200%">
+                        play_arrow
+                    </i>
+                </a>
             </div>
         </div>
         <h5 class="topic">Your favorites</h5>
@@ -14,6 +27,19 @@
                 <img class="song-image" :src="track.album.images[1].url" alt="">
                 <p class="song-name">{{ track.name }}</p>
                 <p class="artist">{{ track.artists.map(el => el.name).join(', ') }}</p>
+                <a class="btn-floating btn-large waves-effect waves-light play"
+                    @click="togglePlay($event, track)"
+                    :style="[track.id === currentTrack.id || isLinkedFrom(track.id) ? {display: 'block !important'} : {}]"
+                >
+                    <i  v-if="(track.id === currentTrack.id || isLinkedFrom(track.id)) && currentTrack.is_playing"
+                        class="material-icons" style="font-size: 200%"
+                    >
+                        pause
+                    </i>
+                    <i  v-else class="material-icons" style="font-size: 200%">
+                        play_arrow
+                    </i>
+                </a>
             </div>
         </div>
         <h5 class="topic">New releases</h5>
@@ -43,6 +69,9 @@ export default {
         currentTrack() {
             return this.$store.state.currentTrack;
         },
+        deviceId() {
+            return this.$store.state.deviceId;
+        }
     },
     beforeMount() {
         axios.get(`${props.api}/me/player/recently-played?limit=9`, {
@@ -79,6 +108,41 @@ export default {
         });
     },
     methods: {
+        togglePlay(event, track) {
+            event.stopPropagation();
+            event.preventDefault();
+            //
+            if (track.id === this.currentTrack.id || this.isLinkedFrom(track.id)) {
+                if (this.currentTrack.is_playing) {
+                    axios.put(`${props.api}/me/player/pause?device_id=${this.deviceId}`, null, {
+                        headers: {
+                            Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                        },
+                    });
+                } else {
+                    axios.put(`${props.api}/me/player/play?device_id=${this.deviceId}`, null, {
+                        headers: {
+                            Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                        },
+                    });
+                }
+            } else {
+                axios.put(`${props.api}/me/player/play?device_id=${this.deviceId}`,
+                    {
+                        'uris': [track.uri],
+                    },
+                    {
+                        headers: {
+                            Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                        },
+                    }
+                );
+            }
+        },
+        isLinkedFrom(id) {
+            let linkedFrom = this.currentTrack.linked_from;
+            return linkedFrom ? linkedFrom.id === id : false;
+        },
         openAlbum(album) {
             this.$router.push({ path: '/browse/album', query: { id: album.id } });
         },
@@ -95,16 +159,17 @@ p, span {
     font-weight: bold;
 }
 /*  */
-/* .play {
+.play {
     position: absolute;
-    top: 2%;
-    left: 3%;
+    top: 72%;
+    left: 60%;
     cursor: default;
     display: none;
+    background-color: #A8C0D8;
 }
 .card:hover .play {
     display: block;
-} */
+}
 .card {
     cursor: pointer;
     display: inline-block;

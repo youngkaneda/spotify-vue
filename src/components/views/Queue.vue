@@ -67,9 +67,6 @@ export default {
             return this.$store.state.queue;
         }
     },
-    beforeUpdate() {
-        console.log(this.queue);
-    },
     methods: {
         play(track) {
             axios.put(`${props.api}/me/player/play?device_id=${this.deviceId}`,

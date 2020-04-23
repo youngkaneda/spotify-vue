@@ -36,6 +36,26 @@ export default {
                 this.$router.push('/');
             }
             window.localStorage.setItem('spotify', JSON.stringify({...response.data}));
+            // schedule access token refresh
+            setInterval(() => {
+                let spotify = JSON.parse(window.localStorage.getItem('spotify'));
+                let req = new URLSearchParams();
+                req.set('grant_type', 'refresh_token');
+                req.set('refresh_token', spotify.refresh_token);
+                axios.post('https://accounts.spotify.com/api/token', req, {
+                    headers: {
+                        'Content-Type':'application/x-www-form-urlencoded',
+                        Authorization: 'Basic ' + btoa(`${props.clientId}:${props.clientSecret}`),
+                    },
+                })
+                .then((response) => {
+                    spotify.access_token = response.data.access_token;
+                    window.localStorage.setItem('spotify', JSON.stringify(spotify));
+                    //
+                    this.$store.dispatch('rebuildPlayer');
+                })
+            }, 1000 * 60 * 55);
+            //
             //redirect for a main page
             this.$router.push('/browse');
         })

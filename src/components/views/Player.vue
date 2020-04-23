@@ -13,21 +13,21 @@
             <div id="options">
                 <i class="material-icons left waves-wispy minorOp" 
                     @click="shuffle"
-                    :style="{color: isShuffled ? 'blue': '#A8C0D8'}" 
+                    :style="{color: context.shuffle ? 'blue': '#A8C0D8'}" 
                     id="shuffle"
                 >
                     shuffle
                 </i>
                 <i class="material-icons left waves-effect waves-wispy" @click="skipToPrevious">skip_previous</i>
-                <i v-if="isPlaying" class="material-icons left waves-effect waves-wispy" @click="pause">pause</i>
+                <i v-if="!context.paused" class="material-icons left waves-effect waves-wispy" @click="pause">pause</i>
                 <i v-else class="material-icons left waves-effect waves-wispy" @click="resume">play_arrow</i>
                 <i class="material-icons left waves-effect waves-wispy" @click="skipToNext">skip_next</i>
                 <i class="material-icons left waves-wispy minorOp"
                     @click="repeat"
-                    :style="{color: isRepeating ? 'blue': '#A8C0D8'}"
+                    :style="{color: !!context.repeat_mode ? 'blue': '#A8C0D8'}"
                     id="repeat"
                 >
-                    {{ currentRepeatMode === 'track' ? 'repeat_one' : 'repeat' }}
+                    {{ repeatModes[context.repeat_mode] === 'track' ? 'repeat_one' : 'repeat' }}
                 </i>
             </div>
             <div style="display: flex; flex-diretion: row; margin-left: 17%;">
@@ -90,13 +90,9 @@ export default {
     },
     data() {
         return {
-            isPlaying: false,
             progress: 0,
-            volume: 0,
-            isShuffled: false,
-            isRepeating: false,
+            volume: 100,
             repeatModes: ['off', 'context', 'track',],
-            currentRepeatMode: null,
             //
             timerId: null,
         }
@@ -116,49 +112,24 @@ export default {
         },
         activeDeviceId() {
             return this.$store.state.activeDeviceId;
-        }
+        },
+        context() {
+            return this.$store.state.context;
+        },
     },
-    mounted() {
-        if (this.player) {
-            // Connect to the player!
-            this.player.connect();
-            return;
-        }
-        const token = JSON.parse(window.localStorage.getItem('spotify')).access_token;
-        const player = new window.Spotify.Player({
-            name: 'Vue Web SDK',
-            getOAuthToken: (cb) => { cb(token); },
-        });
-        // Error handling
-        player.addListener('initialization_error', ({ message }) => { console.error(message); });
-        player.addListener('authentication_error', ({ message }) => { console.error(message); });
-        player.addListener('account_error', ({ message }) => { console.error(message); });
-        player.addListener('playback_error', ({ message }) => { console.error(message); });
-        // Playback status updates
-        player.addListener('player_state_changed', (state) => {
-            if (!state) {
+    watch: {
+        context(value) {
+            // if player state null
+            if (!value) {
+                clearInterval(this.timerId);
                 return;
             }
             //
-            this.$store.commit('setActiveDeviceId', this.deviceId);
+            this.progress = this.context.position;
             //
-            this.progress = state.position;
-            this.isPlaying = !state.paused;
-            this.isShuffled = state.shuffle;
-            this.isRepeating = !!state.repeat_mode;
-            this.currentRepeatMode = this.repeatModes[state.repeat_mode];
-            //
-            this.$store.commit('updateCurrentTrack', {
-                ...state.track_window.current_track, is_playing: !state.paused,
-            });
-            // update queue
-            if (this.queue.length > 0 && this.queue[0].id === this.currentTrack.id) {
-                this.$store.commit('shiftQueue');
-            }
-            // TODO: make a better option for performance
             clearInterval(this.timerId);
             this.timerId = setInterval(() => {
-                if (!this.isPlaying) {
+                if (this.context.paused) {
                     return;
                 }
                 if (this.progress + 1000 < this.currentTrack.duration_ms) {
@@ -167,45 +138,18 @@ export default {
                     clearInterval(this.timerId);
                 }
             }, 1000);
-        });
-        // Ready
-        player.addListener('ready', ({ device_id }) => {
-            console.log('Ready with Device ID', device_id);
-            this.$store.commit('setDeviceId', device_id);
-            // set default volume to the player;
-            player.setVolume(1).then(() => {
-                console.log('Volume updated.');
-                this.volume = 100;
-            });
-        });
-        // Not Ready
-        player.addListener('not_ready', ({ device_id }) => {
-            console.log('Device ID has gone offline', device_id);
-        });
-        player.connect();
-        this.$store.commit('setPlayer', player);
+        },
+    },
+    mounted() {
+        if (this.player) {
+            // Connect to the player!
+            this.$store.dispatch('connectPlayer');
+            return;
+        }
+        this.$store.dispatch('createPlayer');
+        this.$store.dispatch('connectPlayer');
     },
     methods: {
-        scheduleRefreshToken() {
-            //create setinterval to refresh token and reconnect the web sdk, and transfer the playback to it if it was active
-            setInterval(() => {
-                let spotify = JSON.parse(window.localStorage.getItem('spotify'));
-                let req = new URLSearchParams();
-                req.set('grant_type', 'refresh_token');
-                req.set('refresh_token', spotify.refresh_token);
-                axios.post('https://accounts.spotify.com/api/token', req, {
-                    headers: {
-                        'Content-Type':'application/x-www-form-urlencoded',
-                        Authorization: 'Basic ' + btoa(`${props.clientId}:${props.clientSecret}`),
-                    },
-                })
-                .then((response) => {
-                    spotify.access_token = response.data.access_token;
-                    window.localStorage.setItem('spotify', JSON.stringify(spotify));
-                    //
-                })
-            }, 1000 * 60 * 55);
-        },
         mute() {
             axios.put(`${props.api}/me/player/volume?device_id=${this.deviceId}&volume_percent=${0}`,
                 null,
@@ -258,7 +202,7 @@ export default {
             );
         },
         shuffle() {
-            axios.put(`${props.api}/me/player/shuffle?device_id=${this.deviceId}&state=${!this.isShuffled}`,
+            axios.put(`${props.api}/me/player/shuffle?device_id=${this.deviceId}&state=${!this.context.shuffle}`,
                 null,
                 {
                     headers: {
@@ -268,7 +212,7 @@ export default {
             );
         },
         repeat() {
-            let nextRepeatModeIndex = this.repeatModes.indexOf(this.currentRepeatMode) + 1;
+            let nextRepeatModeIndex = this.repeatModes.indexOf(this.repeatModes[this.context.repeat_mode]) + 1;
             if (nextRepeatModeIndex === this.repeatModes.length) {
                 nextRepeatModeIndex = 0;
             }

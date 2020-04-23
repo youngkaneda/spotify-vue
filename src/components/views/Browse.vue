@@ -127,7 +127,7 @@ export default {
                 }
             )
             .then((response) => {
-                this.$store.commit('setSearchResult', response.data);
+                this.$store.commit('searchResult', response.data);
                 this.$router.push({name: 'search'});
             });
         },
@@ -163,7 +163,7 @@ export default {
                 setTimeout(() => {
                     this.getDevices();
                     //
-                    this.$store.commit('setActiveDeviceId', device.id);
+                    this.$store.commit('activeDeviceId', device.id);
                 }, 500);
             });
         }

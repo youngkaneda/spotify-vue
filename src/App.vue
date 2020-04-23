@@ -12,12 +12,9 @@ export default {
         return {
         };
     },
-    methods: {
-    },
     created() {
-        //
         window.onSpotifyWebPlaybackSDKReady = () => {};
-    },
+    }
 };
 </script>
 

@@ -144,7 +144,6 @@ export default {
             )
             .then((response) => {
                 this.$store.commit('addToQueue', track);
-                console.log(track);
                 this.launchToast();
             });
         },
@@ -232,10 +231,7 @@ h3 {
 	width: 50px;
 	height: 50px;
     float: left;
-    padding-left: 4%;
-    padding-right: 3%;
-    padding-top: 4%;
-    padding-bottom: 3%;
+    padding: 13px;
     box-sizing: border-box;
     background-color: #111;
     color: #fff;
