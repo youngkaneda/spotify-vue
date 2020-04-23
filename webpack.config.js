@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     mode: 'development',
@@ -62,6 +63,9 @@ module.exports = {
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         new VueLoaderPlugin(),
+        new CopyPlugin([
+            { from: 'index.html', to: './' },
+        ]),
     ],
     resolve: {
         extensions: ['.js', '.vue'],
