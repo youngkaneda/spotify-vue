@@ -78,7 +78,7 @@
             </div>
         </div>
         <div id="player" class="row">
-            <Player :activeDeviceId="activeDeviceId"></Player>
+            <Player></Player>
         </div>
     </div>
 </template>
@@ -163,7 +163,7 @@ export default {
                 setTimeout(() => {
                     this.getDevices();
                     //
-                    this.activeDeviceId = device.id;
+                    this.$store.commit('setActiveDeviceId', device.id);
                 }, 500);
             });
         }

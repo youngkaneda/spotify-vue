@@ -19,10 +19,10 @@
                     <tr v-for="track in (album.tracks ? album.tracks.items : [])" :key="track.id">
                         <td style="width: 3%;"> 
                             <i style="cursor: pointer;" class="material-icons left waves-wispy" 
-                                :style="[track.id === currentTrack.id ? {color: '#1b7cde'} : {}]"
+                                :style="[track.id === currentTrack.id || isLinkedFrom(track.id) ? {color: '#1b7cde'} : {}]"
                                 @click="togglePlayTrack(track)"
                             >
-                                {{ track.id === currentTrack.id && currentTrack.is_playing ? 'pause' : 'play_arrow'}}
+                                {{ (track.id === currentTrack.id || isLinkedFrom(track.id)) && currentTrack.is_playing ? 'pause' : 'play_arrow'}}
                             </i>
                         </td>
                         <td style="width: 4%;"> 
@@ -31,7 +31,7 @@
                             </i> 
                         </td>
                         <td>
-                            <span :style="[track.id === currentTrack.id ? {color: '#1b7cde'} : {}]">{{ track.name }}</span> 
+                            <span :style="[track.id === currentTrack.id || isLinkedFrom(track.id) ? {color: '#1b7cde'} : {}]">{{ track.name }}</span> 
                             - 
                             <span style="color: gray">{{ track.artists ? track.artists.map(el => el.name).join(', ') : null }}</span>
                         </td>
@@ -80,8 +80,12 @@ export default {
         });
     },
     methods: {
+        isLinkedFrom(id) {
+            let linkedFrom = this.currentTrack.linked_from;
+            return linkedFrom ? linkedFrom.id === id : false;
+        },
         togglePlayTrack(track) {
-            if (track.id === this.currentTrack.id) {
+            if (track.id === this.currentTrack.id || this.isLinkedFrom(track.id)) {
                 if (this.currentTrack.is_playing) {
                     axios.put(`${props.api}/me/player/pause?device_id=${this.deviceId}`, null, {
                         headers: {

@@ -24,10 +24,10 @@
                     <tr v-for="el in (playlist.tracks ? playlist.tracks.items : [])" :key="el.track.id">
                         <td style="width: 3%;"> 
                             <i style="cursor: pointer;" class="material-icons left waves-wispy" 
-                                :style="[el.track.id === currentTrack.id ? {color: '#1b7cde'} : {}]"
+                                :style="[el.track.id === currentTrack.id || isLinkedFrom(el.track.id) ? {color: '#1b7cde'} : {}]"
                                 @click="togglePlayTrack(el.track)"
                             >
-                                {{ el.track.id === currentTrack.id && currentTrack.is_playing ? 'pause' : 'play_arrow'}}
+                                {{ (el.track.id === currentTrack.id || isLinkedFrom(el.track.id)) && currentTrack.is_playing ? 'pause' : 'play_arrow'}}
                             </i>
                         </td>
                         <td style="width: 4%;"> 
@@ -36,7 +36,7 @@
                             </i> 
                         </td>
                         <td>
-                            <span :style="[el.track.id === currentTrack.id ? {color: '#1b7cde'} : {}]">{{ el.track.name }}</span> 
+                            <span :style="[el.track.id === currentTrack.id || isLinkedFrom(el.track.id) ? {color: '#1b7cde'} : {}]">{{ el.track.name }}</span> 
                             - 
                             <span style="color: gray">{{ el.track.artists ? el.track.artists.map(el => el.name).join(', ') : null }}</span>
                         </td>
@@ -97,8 +97,12 @@ export default {
                 }
             );
         },
+        isLinkedFrom(id) {
+            let linkedFrom = this.currentTrack.linked_from;
+            return linkedFrom ? linkedFrom.id === id : false;
+        },
         togglePlayTrack(track) {
-            if (track.id === this.currentTrack.id) {
+            if (track.id === this.currentTrack.id || this.isLinkedFrom(track.id)) {
                 if (this.currentTrack.is_playing) {
                     axios.put(`${props.api}/me/player/pause?device_id=${this.deviceId}`, null, {
                         headers: {

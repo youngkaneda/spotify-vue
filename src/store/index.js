@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable no-param-reassign */
 import Vue from 'vue';
 import Vuex from 'vuex';
@@ -8,6 +9,7 @@ const store = new Vuex.Store({
     state: {
         queue: [],
         currentTrack: {},
+        activeDeviceId: null,
         deviceId: null,
         player: null,
         searchResult: {},
@@ -35,6 +37,9 @@ const store = new Vuex.Store({
                 return true;
             });
             state.queue.splice(0, index + 1);
+        },
+        setActiveDeviceId: (state, deviceId) => {
+            state.activeDeviceId = deviceId;
         },
         setDeviceId: (state, deviceId) => {
             state.deviceId = deviceId;

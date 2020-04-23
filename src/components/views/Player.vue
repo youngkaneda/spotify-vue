@@ -101,9 +101,6 @@ export default {
             timerId: null,
         }
     },
-    props: {
-        activeDeviceId: null,
-    },
     computed: {
         currentTrack() {
             return this.$store.state.currentTrack;
@@ -116,6 +113,9 @@ export default {
         },
         player() {
             return this.$store.state.player;
+        },
+        activeDeviceId() {
+            return this.$store.state.activeDeviceId;
         }
     },
     mounted() {
@@ -126,8 +126,8 @@ export default {
         }
         const token = JSON.parse(window.localStorage.getItem('spotify')).access_token;
         const player = new window.Spotify.Player({
-            name: 'Web Playback SDK',
-            getOAuthToken: cb => { cb(token); }
+            name: 'Vue Web SDK',
+            getOAuthToken: (cb) => { cb(token); },
         });
         // Error handling
         player.addListener('initialization_error', ({ message }) => { console.error(message); });
@@ -135,17 +135,22 @@ export default {
         player.addListener('account_error', ({ message }) => { console.error(message); });
         player.addListener('playback_error', ({ message }) => { console.error(message); });
         // Playback status updates
-        player.addListener('player_state_changed', state => { 
+        player.addListener('player_state_changed', (state) => {
             if (!state) {
-                return ;
+                return;
             }
+            //
+            this.$store.commit('setActiveDeviceId', this.deviceId);
+            //
             this.progress = state.position;
             this.isPlaying = !state.paused;
             this.isShuffled = state.shuffle;
-            this.isRepeating = state.repeat_mode ? true : false;
+            this.isRepeating = !!state.repeat_mode;
             this.currentRepeatMode = this.repeatModes[state.repeat_mode];
             //
-            this.$store.commit('updateCurrentTrack', {...state.track_window.current_track, 'is_playing': !state.paused});
+            this.$store.commit('updateCurrentTrack', {
+                ...state.track_window.current_track, is_playing: !state.paused,
+            });
             // update queue
             if (this.queue.length > 0 && this.queue[0].id === this.currentTrack.id) {
                 this.$store.commit('shiftQueue');
@@ -154,12 +159,11 @@ export default {
             clearInterval(this.timerId);
             this.timerId = setInterval(() => {
                 if (!this.isPlaying) {
-                    return ;
+                    return;
                 }
                 if (this.progress + 1000 < this.currentTrack.duration_ms) {
                     this.progress += 1000;
-                }
-                else {
+                } else {
                     clearInterval(this.timerId);
                 }
             }, 1000);
