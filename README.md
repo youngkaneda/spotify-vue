@@ -1,6 +1,8 @@
 # spotify-vue
 A spotify clone made with vue
 
+![tag](https://travis-ci.com/youngkaneda/spotify-vue.svg?token=ijqMFivnF5tCoXGCQAq7&branch=master)
+
 ## Installation
 
 ```
