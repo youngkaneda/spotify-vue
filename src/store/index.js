@@ -97,7 +97,7 @@ const store = new Vuex.Store({
                     if (!state) {
                         return;
                     }
-                    context.commit('activeDeviceId', context.state.deviceId);
+                    context.commit('activeDeviceId', state.deviceId);
                     //
                     context.commit('context', state);
                     //
