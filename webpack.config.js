@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
 
 module.exports = {
+    productionSourceMap: false,
     mode: 'development',
     entry: './src/main.js',
     output: {
@@ -62,12 +63,6 @@ module.exports = {
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         new VueLoaderPlugin(),
-        new webpack.optimize.UglifyJsPlugin({
-            sourceMap: false,
-            compress: {
-                warnings: false,
-            },
-        }),
     ],
     resolve: {
         extensions: ['.js', '.vue'],
