@@ -13,7 +13,7 @@ export default {
         };
     },
     created() {
-        this.$store.dispath('init');
+        this.$store.dispatch('init');
     }
 };
 </script>
