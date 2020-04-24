@@ -46,16 +46,20 @@ I just wanted to create a webapp to practice my design and web dev skills in vue
 
 ## Screenshots
 
+![album](./ss/album.png)
+![home](./ss/home.png)
+![playlist](./ss/playlist.png)
+
 ## TODO
 
 1. Modularize everything, unfortunately it has a lot of boilerplaited and hard coded code. I pretend modularize the maximum I can to leave the code more clean to maintain. 
 2. Study more about the vue lifecycle to better the experience of the user and the state of the app.
 3. Use a solution for mantain the state when the user refresh the page.
-4. Watch the routes to prevent user navigation througth URL.
+4. Resolve problem in user navigation througth URL. (It will break if you try)
 5. Resolve ALL the eslint warnings.
-
+![warnings](./ss/warnings.png)
 ---
 
 Feel free to fork and contribute.
 
-*PS.: Help me fixing the responsivity and layout stability in different browsers.*
+*PS.: Help me fixing the responsivity and layout stability in different browsers. Special thanks to [rodgeraraujo](https://github.com/rodgeraraujo) and [natansevero](https://github.com/natansevero) that helped me a lot with a lot of doubts during the whole project.*
