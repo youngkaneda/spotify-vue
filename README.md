@@ -56,7 +56,13 @@ I just wanted to create a webapp to practice my design and web dev skills in vue
 2. Study more about the vue lifecycle to better the experience of the user and the state of the app.
 3. Use a solution for mantain the state when the user refresh the page.
 4. Resolve problem in user navigation througth URL. (It will break if you try)
+<<<<<<< HEAD
 5. Resolve ALL the eslint warnings. *85 problems (25 errors, 60 warnings)*
+=======
+5. Resolve ALL the eslint warnings.
+
+![warnings](./ss/warnings.png)
+>>>>>>> a21af2966b97bbebdc5946eee6312674c472aadc
 ---
 
 Feel free to fork and contribute.
