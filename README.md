@@ -57,6 +57,7 @@ I just wanted to create a webapp to practice my design and web dev skills in vue
 3. Use a solution for mantain the state when the user refresh the page.
 4. Resolve problem in user navigation througth URL. (It will break if you try)
 5. Resolve ALL the eslint warnings.
+
 ![warnings](./ss/warnings.png)
 ---
 
