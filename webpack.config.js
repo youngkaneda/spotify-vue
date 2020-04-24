@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
 
 module.exports = {
-    productionSourceMap: false,
+    devtool: false,
     mode: 'development',
     entry: './src/main.js',
     output: {
