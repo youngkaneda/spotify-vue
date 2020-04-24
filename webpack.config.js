@@ -62,6 +62,12 @@ module.exports = {
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         new VueLoaderPlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+            sourceMap: false,
+            compress: {
+                warnings: false,
+            },
+        }),
     ],
     resolve: {
         extensions: ['.js', '.vue'],
