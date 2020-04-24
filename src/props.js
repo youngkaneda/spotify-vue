@@ -19,9 +19,9 @@ const scopes = [
 ];
 
 export default {
-    clientId: 'f3e0e316044b4ec99a9c4645a9b48c97',
-    clientSecret: '1c1c9b55075448a5809a1a679620a09b',
-    redirectURI: 'http://localhost:5000/redirect',
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    redirectURI: process.env.REDIRECT_URI,
     api: 'https://api.spotify.com/v1',
     scope: scopes.join(' '),
 };
