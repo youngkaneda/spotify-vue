@@ -63,12 +63,27 @@ const store = new Vuex.Store({
     },
     actions: {
         init(context) {
+            window.onSpotifyWebPlaybackSDKReady = () => {};
             context.dispatch('createPlayer').then(() => { context.dispatch('connectPlayer'); });
         },
-        createPlayer(context) {
+        async createPlayer(context) {
+            async function waitForSpotifyWebPlaybackSDKToLoad() {
+                return new Promise((resolve) => {
+                    if (window.Spotify) {
+                        resolve(window.Spotify);
+                    } else {
+                        window.onSpotifyWebPlaybackSDKReady = () => {
+                            resolve(window.Spotify);
+                        };
+                    }
+                });
+            }
+            //
+            const { Player } = await waitForSpotifyWebPlaybackSDKToLoad();
+            //
             return new Promise((resolve, reject) => {
                 const token = JSON.parse(window.localStorage.getItem('spotify')).access_token;
-                const player = new window.Spotify.Player({
+                const player = new Player({
                     name: 'Vue Web SDK',
                     getOAuthToken: (cb) => { cb(token); },
                 });
@@ -115,12 +130,12 @@ const store = new Vuex.Store({
                 resolve();
             });
         },
-        connectPlayer(context) {
+        async connectPlayer(context) {
             if (context.state.player) {
                 context.state.player.connect();
             }
         },
-        rebuildPlayer(context) {
+        async rebuildPlayer(context) {
             const { paused } = context.state.context;
             const wasActive = context.state.activeDeviceId === context.state.deviceId;
             context.dispatch('createPlayer').then(() => {

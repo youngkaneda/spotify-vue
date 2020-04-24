@@ -2,11 +2,12 @@ const path = require('path');
 const webpack = require('webpack');
 const { VueLoaderPlugin } = require('vue-loader');
 const Dotenv = require('dotenv-webpack');
+require('babel-polyfill');
 
 module.exports = {
     devtool: false,
     mode: 'development',
-    entry: './src/main.js',
+    entry: ['babel-polyfill', './src/main.js'],
     output: {
         filename: 'build.js',
         path: path.resolve(__dirname, './dist'),
