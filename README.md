@@ -1,7 +1,7 @@
 # spotify-vue
 A spotify clone made with vue
 
-![tag](https://travis-ci.com/youngkaneda/spotify-vue.svg?token=ijqMFivnF5tCoXGCQAq7&branch=master)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/924e63e4-fedf-40e7-8aac-e434d5e049b3/deploy-status)](https://app.netlify.com/sites/vuespotify/deploys)
 
 ## Installation
 
