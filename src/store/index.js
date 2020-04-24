@@ -5,11 +5,13 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
+import createPersistedState from 'vuex-persistedstate';
 import props from '../props';
 
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
+    plugins: [createPersistedState()],
     state: {
         queue: [],
         currentTrack: {},
