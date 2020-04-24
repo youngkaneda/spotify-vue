@@ -140,15 +140,6 @@ export default {
             }, 1000);
         },
     },
-    mounted() {
-        if (this.player) {
-            // Connect to the player!
-            this.$store.dispatch('connectPlayer');
-            return;
-        }
-        this.$store.dispatch('createPlayer');
-        this.$store.dispatch('connectPlayer');
-    },
     methods: {
         mute() {
             axios.put(`${props.api}/me/player/volume?device_id=${this.deviceId}&volume_percent=${0}`,

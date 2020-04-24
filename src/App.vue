@@ -13,7 +13,7 @@ export default {
         };
     },
     created() {
-        window.onSpotifyWebPlaybackSDKReady = () => {};
+        this.$store.dispath('init');
     }
 };
 </script>

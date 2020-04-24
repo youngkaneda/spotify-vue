@@ -62,6 +62,9 @@ const store = new Vuex.Store({
         },
     },
     actions: {
+        init(context) {
+            context.dispatch('createPlayer').then(() => { context.dispatch('connectPlayer'); });
+        },
         createPlayer(context) {
             return new Promise((resolve, reject) => {
                 const token = JSON.parse(window.localStorage.getItem('spotify')).access_token;
