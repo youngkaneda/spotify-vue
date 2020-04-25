@@ -1,5 +1,5 @@
 <template>
-    <div v-if="activeDeviceId === deviceId && activeDeviceId != null">
+    <div v-if="activeDeviceId">
         <div id="song-preview" class="col s2">
             <div style="margin-top: 2%">
                 <img v-if="currentTrack.album.images" :src="currentTrack.album.images[1].url">            
@@ -73,7 +73,7 @@
             </div>
         </div>
     </div>
-    <div id="warning" v-else>
+    <div v-else id="warning">
         Please connect with this device to use the player functionalities.
     </div>
 </template>
@@ -162,6 +162,7 @@ export default {
             });
         },
         resume() {
+            console.log(this.activeDeviceId);
             axios.put(`${props.api}/me/player/play?device_id=${this.deviceId}`, null, {
                 headers: {
                     Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,

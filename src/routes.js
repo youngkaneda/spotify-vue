@@ -10,6 +10,7 @@ import Artist from './components/views/Artist.vue';
 import Playlists from './components/views/Playlists.vue';
 import Playlist from './components/views/Playlist.vue';
 import Search from './components/views/Search.vue';
+import NotFound from './components/NotFound.vue';
 
 export default [
     { path: '/redirect', component: Redirect },
@@ -18,15 +19,15 @@ export default [
         path: '/browse',
         component: Browse,
         children: [
-            { path: '/browse/queue', component: Queue },
-            { path: '/browse/albums', component: Albums },
-            { path: '/browse/album', component: Album },
-            { path: '/browse/artists', component: Artists },
-            { path: '/browse/artist', component: Artist },
-            { path: '/browse/playlists', component: Playlists },
-            { path: '/browse/playlist', component: Playlist },
+            { path: 'queue', component: Queue },
+            { path: 'albums', component: Albums },
+            { path: 'album', component: Album },
+            { path: 'artists', component: Artists },
+            { path: 'artist', component: Artist },
+            { path: 'playlists', component: Playlists },
+            { path: 'playlist', component: Playlist },
             {
-                path: '/browse/search',
+                path: 'search',
                 name: 'search',
                 component: Search,
                 props: true,
@@ -34,4 +35,5 @@ export default [
             { path: '', component: Home },
         ],
     },
+    { path: '*', component: NotFound },
 ];
