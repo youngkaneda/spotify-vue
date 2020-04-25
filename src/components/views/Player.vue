@@ -1,5 +1,5 @@
 <template>
-    <div v-if="activeDeviceId">
+    <div v-if="activeDeviceId === deviceId && activeDeviceId">
         <div id="song-preview" class="col s2">
             <div style="margin-top: 2%">
                 <img v-if="currentTrack.album.images" :src="currentTrack.album.images[1].url">            
