@@ -136,7 +136,24 @@ export default new Vuex.Store({
             });
         },
         connectPlayer(context) {
-            return context.state.player.connect();
+            context.state.player.connect().then(() => {
+                setTimeout(() => {
+                    const active = context.state.activeDeviceId === context.state.deviceId;
+                    if (active && context.state.activeDeviceId) {
+                        axios.put(`${props.api}/me/player`,
+                            {
+                                device_ids: [context.state.deviceId],
+                                play: !context.state.context.paused,
+                            },
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
+                                },
+                            },
+                        );
+                    }
+                }, 2000);
+            });
         },
         rebuildPlayer(context) {
             const { paused } = context.state.context;
