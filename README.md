@@ -1,5 +1,5 @@
 # spotify-vue
-A spotify clone made with vue
+A spotify clone made with vue https://vuespotify.netlify.app/
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/924e63e4-fedf-40e7-8aac-e434d5e049b3/deploy-status)](https://app.netlify.com/sites/vuespotify/deploys)
 
@@ -9,7 +9,7 @@ A spotify clone made with vue
 git clone https://github.com/youngkaneda/spotify-vue
 cd spotify-vue
 npm install
-npm run dev
+npm run serve
 # now go to the localhost:port link deployed by npm
 ```
 
