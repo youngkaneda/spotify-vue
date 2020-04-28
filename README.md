@@ -55,7 +55,7 @@ I just wanted to create a webapp to practice my design and web dev skills in vue
 1. Modularize everything, unfortunately it has a lot of boilerplaited and hard coded code. I pretend modularize the maximum I can to leave the code more clean to maintain. 
 2. Study more about the vue lifecycle to better the experience of the user and the state of the app.
 3. Use a solution for mantain the state when the user refresh the page.
-4. Resolve problem in user navigation througth URL. (It will break if you try)
+4. ~~Resolve problem in user navigation througth URL. (It will break if you try)~~
 5. Resolve ALL the eslint warnings. *85 problems (25 errors, 60 warnings)*
 
 
