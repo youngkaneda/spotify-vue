@@ -6,7 +6,7 @@ A spotify clone made with vue https://vuespotify.netlify.app/
 ## Installation
 
 ```
-git clone https://github.com/kanedatc/spotify-vue
+git clone https://github.com/youngkaneda/spotify-vue
 cd spotify-vue
 npm install
 npm run serve
