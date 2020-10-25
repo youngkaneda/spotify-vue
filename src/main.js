@@ -5,6 +5,8 @@ import store from './store';
 
 import './assets/css/global.css';
 
+Vue.filter('formatter', (number) => number.toLocaleString());
+
 Vue.config.productionTip = false;
 
 new Vue({
