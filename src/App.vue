@@ -5,11 +5,9 @@
 </template>
 
 <script>
-    export default {
-        created() {
-            window.onSpotifyWebPlaybackSDKReady = () => { };
-        }
-    };
+export default {
+    created() {
+        window.onSpotifyWebPlaybackSDKReady = () => { };
+    },
+};
 </script>
-
-<style></style>

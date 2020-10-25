@@ -9,7 +9,8 @@
             rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <title><%= htmlWebpackPlugin.options.title %></title>
+        <script charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <title><%= htmlWebpackPlugin.options.title %></title>   
         <style>
             * {
                 color: #333333;
@@ -29,6 +30,13 @@
                 background: none;
             }
         </style>
+        <script>
+            $(document).ready(function(){
+                $('.sidenav').sidenav();
+                $('.modal').modal();
+            });
+
+        </script>
     </head>
     <body>
         <noscript>

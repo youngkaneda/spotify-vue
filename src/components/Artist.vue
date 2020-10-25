@@ -19,8 +19,8 @@
                     <tr v-for="track in topTracks" :key="track.id">
                         <td style="width: 3%;">
                             <i style="cursor: pointer;" class="material-icons left waves-wispy"
-                                :style="[track.id === currentTrack.id || isLinkedFrom(track.id) ? {color: '#1b7cde'} : {}]"
-                                @click="togglePlayTrack(track)"
+                               :style="[track.id === currentTrack.id || isLinkedFrom(track.id) ? {color: '#1b7cde'} : {}]"
+                               @click="togglePlayTrack(track)"
                             >
                                 {{ (track.id === currentTrack.id || isLinkedFrom(track.id)) && currentTrack.is_playing ? 'pause' : 'play_arrow'}}
                             </i>
@@ -57,8 +57,8 @@
 </template>
 
 <script>
-import props from '../props';
 import axios from 'axios';
+import props from '../props';
 
 export default {
     data() {
@@ -79,32 +79,32 @@ export default {
     beforeMount() {
         axios.get(`${props.api}/artists/${this.$route.query.id}`, {
             headers: {
-                Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
             },
         })
-        .then((response) => {
-            this.artist = response.data;
-        });
+            .then((response) => {
+                this.artist = response.data;
+            });
         axios.get(`${props.api}/artists/${this.$route.query.id}/top-tracks?country=US`, {
             headers: {
-                Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
             },
         })
-        .then((response) => {
-            this.topTracks = response.data.tracks;
-        });
+            .then((response) => {
+                this.topTracks = response.data.tracks;
+            });
         axios.get(`${props.api}/artists/${this.$route.query.id}/albums?offset=0&limit=7&include_groups=album&market=US`, {
             headers: {
-                Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
             },
         })
-        .then((response) => {
-            this.albums = response.data.items;
-        });
+            .then((response) => {
+                this.albums = response.data.items;
+            });
     },
     methods: {
         isLinkedFrom(id) {
-            let linkedFrom = this.currentTrack.linked_from;
+            const linkedFrom = this.currentTrack.linked_from;
             return linkedFrom ? linkedFrom.id === id : false;
         },
         togglePlayTrack(track) {
@@ -112,68 +112,66 @@ export default {
                 if (this.currentTrack.is_playing) {
                     axios.put(`${props.api}/me/player/pause?device_id=${this.deviceId}`, null, {
                         headers: {
-                            Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                            Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                         },
                     });
                 } else {
                     axios.put(`${props.api}/me/player/play?device_id=${this.deviceId}`, null, {
                         headers: {
-                            Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                            Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                         },
                     });
                 }
             } else {
                 axios.put(`${props.api}/me/player/play?device_id=${this.deviceId}`,
                     {
-                        'uris': [track.uri],
+                        uris: [track.uri],
                     },
                     {
                         headers: {
-                            Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                            Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                         },
-                    }
-                );
+                    });
             }
         },
         addToQueue(track) {
             axios.post(`${props.api}/me/player/queue?device_id=${this.deviceId}&uri=${track.uri}`, null, {
-                    headers: {
-                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
-                    },
-                }
-            )
-            .then((response) => {
-                this.$store.commit('addToQueue', track);
-                this.launchToast();
-            });
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
+                },
+            })
+                .then((response) => {
+                    this.$store.commit('addToQueue', track);
+                    this.launchToast();
+                });
         },
         launchToast() {
-            var x = document.getElementById('toast')
+            const x = document.getElementById('toast');
             x.className = 'show';
-            setTimeout(function(){ x.className = x.className.replace('show', ''); }, 3000);
+            setTimeout(() => { x.className = x.className.replace('show', ''); }, 3000);
         },
         openAlbum(album) {
             this.$router.push({ path: '/browse/album', query: { id: album.id } });
         },
         getTimeDisplay(ms) {
-            var seconds = (ms / 1000).toFixed(0);
-            var minutes = Math.floor(seconds / 60);
-            var hours = "";
+            let seconds = (ms / 1000).toFixed(0);
+            let minutes = Math.floor(seconds / 60);
+            let hours = '';
             if (minutes > 59) {
                 hours = Math.floor(minutes / 60);
-                hours = (hours >= 10) ? hours : "0" + hours;
+                hours = (hours >= 10) ? hours : `0${hours}`;
                 minutes = Math.floor(minutes % 60);
-                minutes = (minutes >= 10) ? minutes : "0" + minutes;
+                minutes = (minutes >= 10) ? minutes : `0${minutes}`;
             }
             seconds = Math.floor(seconds % 60);
-            seconds = (seconds >= 10) ? seconds : "0" + seconds;
-            if (hours != "") {
-                return hours + ":" + minutes + ":" + seconds;
+            seconds = (seconds >= 10) ? seconds : `0${seconds}`;
+            if (hours != '') {
+                return `${hours}:${minutes}:${seconds}`;
             }
-            return "0" +  minutes + ":" + seconds;
+            return `0${minutes}:${seconds}`;
         },
     },
-}
+};
 </script>
 
 <style scoped>
