@@ -5,7 +5,7 @@
         <div class="song">
             <div class="icon">
                 <i style="cursor: pointer; color: #1b7cde;" class="material-icons left waves-wispy"
-                    @click="togglePlay()"
+                   @click="togglePlay()"
                 >
                     {{ currentTrack.is_playing ? 'pause' : 'play_arrow'}}
                 </i>
@@ -27,8 +27,8 @@
         <div class="song" v-for="(track, i) in queue" :key="track.id + i">
             <div class="icon">
                 <i style="cursor: pointer;"
-                    class="material-icons left waves-wispy volumeIcon"
-                    @click="play(track)"
+                   class="material-icons left waves-wispy volumeIcon"
+                   @click="play(track)"
                 >
                     play_arrow
                 </i>
@@ -54,7 +54,7 @@ import props from '../props';
 export default {
     data() {
         return {
-        }
+        };
     },
     computed: {
         deviceId() {
@@ -71,32 +71,31 @@ export default {
         play(track) {
             axios.put(`${props.api}/me/player/play?device_id=${this.deviceId}`,
                 {
-                    'uris': [track.uri],
+                    uris: [track.uri],
                 },
                 {
                     headers: {
-                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                        Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                     },
-                }
-            )
-            .then((response) => {
-                this.$store.commit('skipQueueToTrack', track.id);
-            });
+                })
+                .then((response) => {
+                    this.$store.commit('skipQueueToTrack', track.id);
+                });
         },
         togglePlay() {
             if (this.currentTrack.is_playing) {
                 axios.put(`${props.api}/me/player/pause?device_id=${this.deviceId}`, null, {
                     headers: {
-                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                        Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                     },
                 });
             } else {
                 axios.put(`${props.api}/me/player/play?device_id=${this.deviceId}`, null, {
                     headers: {
-                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                        Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                     },
                 });
-            };
+            }
         },
         openAlbum(album) {
             this.$router.push({ path: '/browse/album', query: { id: album.uri.split(':')[2] } });
@@ -105,24 +104,24 @@ export default {
             this.$router.push({ path: '/browse/artist', query: { id: artist.uri.split(':')[2] } });
         },
         getTimeDisplay(ms) {
-            var seconds = (ms / 1000).toFixed(0);
-            var minutes = Math.floor(seconds / 60);
-            var hours = "";
+            let seconds = (ms / 1000).toFixed(0);
+            let minutes = Math.floor(seconds / 60);
+            let hours = '';
             if (minutes > 59) {
                 hours = Math.floor(minutes / 60);
-                hours = (hours >= 10) ? hours : "0" + hours;
+                hours = (hours >= 10) ? hours : `0${hours}`;
                 minutes = Math.floor(minutes % 60);
-                minutes = (minutes >= 10) ? minutes : "0" + minutes;
+                minutes = (minutes >= 10) ? minutes : `0${minutes}`;
             }
             seconds = Math.floor(seconds % 60);
-            seconds = (seconds >= 10) ? seconds : "0" + seconds;
-            if (hours != "") {
-                return hours + ":" + minutes + ":" + seconds;
+            seconds = (seconds >= 10) ? seconds : `0${seconds}`;
+            if (hours != '') {
+                return `${hours}:${minutes}:${seconds}`;
             }
-            return "0" +  minutes + ":" + seconds;
+            return `0${minutes}:${seconds}`;
         },
     },
-}
+};
 </script>
 
 <style scoped>

@@ -1,0 +1,113 @@
+header,
+main,
+footer {
+  padding-left: 300px;
+}
+@media only screen and (max-width: 992px) {
+  header,
+  main,
+  footer {
+    padding-left: 0;
+  }
+}
+
+/* Container stuff */
+@media only screen and (max-width: 993px) {
+  .container {
+    width: 70%;
+  }
+}
+@media only screen and (max-width: 601px) {
+  .container {
+    width: 60%;
+  }
+
+  .card {
+    width: 17.3rem; 
+  }
+
+  .col .row {
+    margin-left: 10%;    
+  }
+}
+
+.container {
+  margin: 0 auto;
+  max-width: 1280px;
+  width: 90%;
+}
+
+/* Flexbox stuff */
+@media screen and (min-width: 40em) {
+  .card {
+    max-width: calc(30% - 1em);
+  }
+}
+@media screen and (min-width: 60em) {
+  .card {
+    max-width: calc(19% - 1em);
+  }
+}
+.centered {
+  margin: 0 auto;
+  padding: 0 1em;
+}
+@media screen and (min-width: 52em) {
+  .centered {
+    max-width: 80em;
+  }
+}
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+}
+.card {
+  flex: 1 0 500px;
+  box-sizing: border-box;
+}
+
+/* Card stuff */
+.card {
+  cursor: pointer;
+  display: flexbox;
+  flex-direction: column;
+  background-color: rgb(225, 225, 225, 0.7);
+  border-radius: 3%;
+  margin-top: 1%;
+  margin-left: 1%;
+  margin: 10px;
+}
+
+.song-image,
+.album-image,
+.playlist-image,
+.artist-image {
+  width: 100%;
+  position: relative;
+  background-color: #333;
+  -webkit-box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+.song-name,
+.album-name,
+.playlist-name,
+.artist-name {
+  font-weight: bold;
+  color: #1b7cde;
+  margin-left: 11.5%;
+  font-size: 110%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 77%;
+  margin-top: 7%;
+  margin-bottom: 1%;
+}
+
+div.card > img.artist-image {
+  border-radius: 50%;
+  margin-left: 11.5%;
+  width: 77%;
+  margin-top: 7%;
+  
+}

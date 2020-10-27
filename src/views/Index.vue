@@ -20,9 +20,9 @@ export default {
             // clean store;
             this.$store.commit('clear');
             window.location.replace(`https://accounts.spotify.com/authorize?client_id=${props.clientId}&response_type=code&redirect_uri=${props.redirectURI}&scope=${props.scope}`);
-        }
-    }
-}
+        },
+    },
+};
 </script>
 
 <style scoped>
@@ -33,7 +33,7 @@ export default {
     margin-top: 10%;
 }
 #desc {
-    width: 29%;
+    width: 70%;
     display: flex;
     justify-content: center;
     align-items: center;

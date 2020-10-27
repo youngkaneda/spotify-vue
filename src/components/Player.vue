@@ -12,9 +12,9 @@
         <div id="sdk-player" class="col s8">
             <div id="options">
                 <i class="material-icons left waves-wispy minorOp"
-                    @click="shuffle"
-                    :style="{color: context.shuffle ? 'blue': '#A8C0D8'}"
-                    id="shuffle"
+                   @click="shuffle"
+                   :style="{color: context.shuffle ? 'blue': '#A8C0D8'}"
+                   id="shuffle"
                 >
                     shuffle
                 </i>
@@ -23,9 +23,9 @@
                 <i v-else class="material-icons left waves-effect waves-wispy" @click="resume">play_arrow</i>
                 <i class="material-icons left waves-effect waves-wispy" @click="skipToNext">skip_next</i>
                 <i class="material-icons left waves-wispy minorOp"
-                    @click="repeat"
-                    :style="{color: !!context.repeat_mode ? 'blue': '#A8C0D8'}"
-                    id="repeat"
+                   @click="repeat"
+                   :style="{color: !!context.repeat_mode ? 'blue': '#A8C0D8'}"
+                   id="repeat"
                 >
                     {{ repeatModes[context.repeat_mode] === 'track' ? 'repeat_one' : 'repeat' }}
                 </i>
@@ -92,10 +92,10 @@ export default {
         return {
             progress: 0,
             volume: 100,
-            repeatModes: ['off', 'context', 'track',],
+            repeatModes: ['off', 'context', 'track'],
             //
             timerId: null,
-        }
+        };
     },
     computed: {
         currentTrack() {
@@ -149,39 +149,38 @@ export default {
                 null,
                 {
                     headers: {
-                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                        Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                     },
-                },
-            )
-            .then((response) => {
-                this.volume = 0;
-            });
+                })
+                .then((response) => {
+                    this.volume = 0;
+                });
         },
         pause() {
             axios.put(`${props.api}/me/player/pause?device_id=${this.deviceId}`, null, {
                 headers: {
-                    Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                    Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                 },
             });
         },
         resume() {
             axios.put(`${props.api}/me/player/play?device_id=${this.deviceId}`, null, {
                 headers: {
-                    Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                    Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                 },
             });
         },
         skipToNext() {
             axios.post(`${props.api}/me/player/next?device_id=${this.deviceId}`, null, {
                 headers: {
-                    Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                    Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                 },
             });
         },
         skipToPrevious() {
             axios.post(`${props.api}/me/player/previous?device_id=${this.deviceId}`, null, {
                 headers: {
-                    Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                    Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                 },
             });
         },
@@ -190,20 +189,18 @@ export default {
                 null,
                 {
                     headers: {
-                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                        Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                     },
-                },
-            );
+                });
         },
         shuffle() {
             axios.put(`${props.api}/me/player/shuffle?device_id=${this.deviceId}&state=${!this.context.shuffle}`,
                 null,
                 {
                     headers: {
-                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                        Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                     },
-                },
-            );
+                });
         },
         repeat() {
             let nextRepeatModeIndex = this.repeatModes.indexOf(this.repeatModes[this.context.repeat_mode]) + 1;
@@ -214,43 +211,41 @@ export default {
                 null,
                 {
                     headers: {
-                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                        Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                     },
-                },
-            );
+                });
         },
         changeVolume() {
             axios.put(`${props.api}/me/player/volume?device_id=${this.deviceId}&volume_percent=${this.volume}`,
                 null,
                 {
                     headers: {
-                        Authorization: 'Bearer ' + JSON.parse(window.localStorage.getItem('spotify')).access_token,
+                        Authorization: `Bearer ${JSON.parse(window.localStorage.getItem('spotify')).access_token}`,
                     },
-                },
-            );
+                });
         },
         openQueue() {
             this.$router.push('/browse/queue');
         },
         getTimeDisplay(ms) {
-            var seconds = (ms / 1000).toFixed(0);
-            var minutes = Math.floor(seconds / 60);
-            var hours = "";
+            let seconds = (ms / 1000).toFixed(0);
+            let minutes = Math.floor(seconds / 60);
+            let hours = '';
             if (minutes > 59) {
                 hours = Math.floor(minutes / 60);
-                hours = (hours >= 10) ? hours : "0" + hours;
+                hours = (hours >= 10) ? hours : `0${hours}`;
                 minutes = Math.floor(minutes % 60);
-                minutes = (minutes >= 10) ? minutes : "0" + minutes;
+                minutes = (minutes >= 10) ? minutes : `0${minutes}`;
             }
             seconds = Math.floor(seconds % 60);
-            seconds = (seconds >= 10) ? seconds : "0" + seconds;
-            if (hours != "") {
-                return hours + ":" + minutes + ":" + seconds;
+            seconds = (seconds >= 10) ? seconds : `0${seconds}`;
+            if (hours != '') {
+                return `${hours}:${minutes}:${seconds}`;
             }
-            return "0" +  minutes + ":" + seconds;
+            return `0${minutes}:${seconds}`;
         },
     },
-}
+};
 </script>
 
 <style scoped>
